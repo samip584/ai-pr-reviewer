@@ -20,6 +20,9 @@ except Exception:
     print("Error: The 'openai' package is required. Install with: pip install openai", file=sys.stderr)
     sys.exit(2)
 
+# Constants
+API_BASE_URL = "https://api.openai.com/v1/"
+
 
 def resolve_model(model: str) -> str:
     aliases = {
@@ -28,6 +31,14 @@ def resolve_model(model: str) -> str:
         "gpt-3.5-turbo": "gpt-3.5-turbo",
     }
     return aliases.get(model.lower(), model)
+
+
+def build_system_prompt() -> str:
+    return """You are an expert code reviewer. Review the code changes and provide actionable feedback on:
+- Bugs and logic errors
+- Security vulnerabilities
+- Performance issues
+- Code readability and best practices"""
 
 
 def build_user_prompt(diff_text: str) -> str:
@@ -91,9 +102,31 @@ def main() -> None:
         )
         print(f"[rwgpt] input chars={len(diff_text)}", file=sys.stderr)
 
+    system_prompt = build_system_prompt()
     user_prompt = build_user_prompt(diff_text)
-    print(f"Ready to review with {model}!")
-    print(f"Prompt preview: {user_prompt[:100]}...")
+
+    client = OpenAI(base_url=API_BASE_URL)
+
+    try:
+        resp = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
+    except Exception as e:
+        print(f"OpenAI API error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    content = resp.choices[0].message.content if resp.choices else ""
+    if not content:
+        print("No response content.", file=sys.stderr)
+        sys.exit(1)
+
+    print(content)
 
 
 if __name__ == "__main__":
