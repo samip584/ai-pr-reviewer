@@ -8,15 +8,15 @@ rwgpt is an automated code review CLI that uses GPT to analyze your code changes
 
 **Works in any git repository** - Install once, use everywhere!
 
-## Installation/Update
+## Quick Start (2 minutes)
 
-**One-Line Install:**
+### 1. Install rwgpt
 
 ```bash
 pip install git+https://github.com/yourusername/ai-pr-reviewer.git
 ```
 
-**Set your OpenAI API key:**
+### 2. Set your OpenAI API key
 
 ```bash
 export OPENAI_API_KEY="sk-your-api-key-here"
@@ -26,11 +26,10 @@ export OPENAI_API_KEY="sk-your-api-key-here"
 
 ```bash
 echo 'export OPENAI_API_KEY="sk-your-api-key-here"' >> ~/.zshrc
+source ~/.zshrc
 ```
 
-That's it! Now `rwgpt` works from **any directory**. 🎉
-
-## Usage
+### 3. Use it!
 
 From any git repository:
 
@@ -45,17 +44,40 @@ rwgpt --input "$(git show)"
 rwgpt --input "$(git diff --staged)"
 ```
 
-**Common options:**
+That's it! 🎉
+
+## Usage Examples
+
+### Basic Usage
+
+```bash
+# Review before committing
+git diff | rwgpt
+
+# Review a specific commit
+rwgpt --input "$(git show abc123)"
+
+# Review changes between branches
+rwgpt --input "$(git diff main..feature-branch)"
+
+# Save review to file
+rwgpt --input "$(git diff)" > review.md
+```
+
+### Advanced Options
 
 ```bash
 # Use GPT-3.5 (faster, cheaper)
 rwgpt --input "$(git diff)" -m gpt-3.5
 
-# More detailed review
+# More detailed review (more tokens)
 rwgpt --input "$(git diff)" --max 2000
 
-# Verbose mode
+# Verbose mode (shows config)
 rwgpt --input "$(git diff)" -v
+
+# All flags example
+rwgpt --input "$(git diff)" -m gpt4 --max 1500 -t 0.2 -v
 ```
 
 ### All Available Options
@@ -69,13 +91,9 @@ rwgpt --input "$(git diff)" -v
 | `--temperature` | `-t`      | Creativity (0.0-1.0)      | `0.2`    |
 | `--verbose`     | `-v`      | Show configuration        | `false`  |
 
-### Example with All Flags
+## What the AI Reviews
 
-```bash
-rwgpt --input "$(git diff)" -m gpt4 --max 1500 -t 0.2 -v
-```
-
-## What does it review?
+The AI acts as a senior engineer and checks for:
 
 - 🐛 **Bugs** - Logic errors, edge cases, potential crashes
 - 🔒 **Security** - SQL injection, XSS, vulnerabilities
@@ -84,24 +102,38 @@ rwgpt --input "$(git diff)" -m gpt4 --max 1500 -t 0.2 -v
 - 🧪 **Testing** - Missing tests, test coverage
 - 📚 **Best Practices** - Code smells, anti-patterns
 
-## Output Example
+## Output Format
 
-````markdown
+The AI provides structured feedback with:
+
+```markdown
+# filename.py
+
+## Line 42
+
+### Comment
+Explanation of the issue or improvement
+
+### Suggested Change
+```python
+# Better code here
+```
+```
+
+## Example Output
+
+```markdown
 # example.py
 
 ## Line 10
 
 ### Comment
-
 SQL injection vulnerability - user input is directly concatenated into query.
 
 ### Suggested Change
-
 ```python
 data = db.query("SELECT * FROM users WHERE id = %s", (user_id,))
 ```
-````
-
 ```
 
 ## Requirements
@@ -109,6 +141,47 @@ data = db.query("SELECT * FROM users WHERE id = %s", (user_id,))
 - Python 3.8+
 - OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
 - Git
+
+## Troubleshooting
+
+### Command not found
+
+If `rwgpt` is not found after installation:
+
+1. **Check if it's installed:**
+   ```bash
+   pip show rwgpt
+   ```
+
+2. **Try using Python module directly:**
+   ```bash
+   python3 -m rwgpt --help
+   ```
+
+3. **Ensure pip install location is in PATH:**
+   ```bash
+   python3 -m site --user-base
+   # Add the bin directory to your PATH
+   ```
+
+4. **Reinstall:**
+   ```bash
+   pip uninstall rwgpt
+   pip install git+https://github.com/yourusername/ai-pr-reviewer.git
+   ```
+
+### API Key Issues
+
+If you get an authentication error:
+
+1. **Verify your API key is set:**
+   ```bash
+   echo $OPENAI_API_KEY
+   ```
+
+2. **Check your API key is valid at:** https://platform.openai.com/api-keys
+
+3. **Ensure you have billing set up** on your OpenAI account
 
 ## License
 
