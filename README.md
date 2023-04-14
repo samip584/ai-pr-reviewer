@@ -120,7 +120,7 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          git show HEAD | rwgpt > review.md
+          rwgpt --input "$(git show HEAD)" > review.md
           cat review.md
 ```
 
@@ -144,10 +144,10 @@ For GitLab CI, Jenkins, CircleCI, etc.:
 
 3. **Run the review:**
    ```bash
-   git show HEAD | rwgpt
+   rwgpt --input "$(git show HEAD)"
    ```
 
-   Or for a specific commit: `git show <commit_hash> | rwgpt`
+   Or for a specific commit: `rwgpt --input "$(git show <commit_hash>)"`
 
 ### Notes
 
