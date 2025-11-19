@@ -13,7 +13,7 @@ rwgpt is an automated code review CLI that uses GPT to analyze your code changes
 ### 1. Install rwgpt
 
 ```bash
-pip install git+https://github.com/yourusername/ai-pr-reviewer.git
+pip install git+https://github.com/samip584/ai-pr-reviewer.git
 ```
 
 ### 2. Set your OpenAI API key
@@ -106,19 +106,23 @@ The AI acts as a senior engineer and checks for:
 
 The AI provides structured feedback with:
 
-```markdown
+````markdown
 # filename.py
 
 ## Line 42
 
 ### Comment
+
 Explanation of the issue or improvement
 
 ### Suggested Change
+
 ```python
 # Better code here
 ```
-```
+````
+
+````
 
 ## Example Output
 
@@ -133,8 +137,9 @@ SQL injection vulnerability - user input is directly concatenated into query.
 ### Suggested Change
 ```python
 data = db.query("SELECT * FROM users WHERE id = %s", (user_id,))
-```
-```
+````
+
+````
 
 ## Requirements
 
@@ -151,14 +156,16 @@ If `rwgpt` is not found after installation:
 1. **Check if it's installed:**
    ```bash
    pip show rwgpt
-   ```
+````
 
 2. **Try using Python module directly:**
+
    ```bash
    python3 -m rwgpt --help
    ```
 
 3. **Ensure pip install location is in PATH:**
+
    ```bash
    python3 -m site --user-base
    # Add the bin directory to your PATH
@@ -167,7 +174,7 @@ If `rwgpt` is not found after installation:
 4. **Reinstall:**
    ```bash
    pip uninstall rwgpt
-   pip install git+https://github.com/yourusername/ai-pr-reviewer.git
+   pip install git+https://github.com/samip584/ai-pr-reviewer.git
    ```
 
 ### API Key Issues
@@ -175,6 +182,7 @@ If `rwgpt` is not found after installation:
 If you get an authentication error:
 
 1. **Verify your API key is set:**
+
    ```bash
    echo $OPENAI_API_KEY
    ```
@@ -190,4 +198,7 @@ MIT License
 ---
 
 Made with ❤️ for better code reviews
+
+```
+
 ```
