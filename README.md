@@ -120,14 +120,14 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          git diff origin/${{ github.base_ref }}..HEAD | rwgpt > review.md
+          git show HEAD | rwgpt > review.md
           cat review.md
 ```
 
 This workflow:
 - Triggers on pull requests
 - Installs Python and rwgpt
-- Runs the AI review on the PR diff
+- Runs the AI review on the latest commit in the PR
 - Outputs the review to the console (you can extend this to post comments)
 
 ### Other CI/CD Platforms
@@ -144,10 +144,10 @@ For GitLab CI, Jenkins, CircleCI, etc.:
 
 3. **Run the review:**
    ```bash
-   git diff <base_commit>..<head_commit> | rwgpt
+   git show HEAD | rwgpt
    ```
 
-   Replace `<base_commit>` and `<head_commit>` with appropriate refs (e.g., `origin/main..HEAD` for GitHub-style PRs).
+   Or for a specific commit: `git show <commit_hash> | rwgpt`
 
 ### Notes
 
