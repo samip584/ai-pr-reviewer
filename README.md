@@ -91,6 +91,71 @@ rwgpt --input "$(git diff)" -m gpt4 --max 1500 -t 0.2 -v
 | `--temperature` | `-t`      | Creativity (0.0-1.0)      | `0.2`    |
 | `--verbose`     | `-v`      | Show configuration        | `false`  |
 
+## CI/CD Integration
+
+You can integrate rwgpt into your CI/CD pipeline to automatically review code changes in pull requests or commits.
+
+### GitHub Actions Example
+
+Create a `.github/workflows/review.yml` file in your repository:
+
+```yaml
+name: AI Code Review
+on: [pull_request]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+      - name: Install rwgpt
+        run: pip install git+https://github.com/samip584/ai-pr-reviewer.git
+      - name: Run AI Review
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          git diff origin/${{ github.base_ref }}..HEAD | rwgpt > review.md
+          cat review.md
+```
+
+This workflow:
+- Triggers on pull requests
+- Installs Python and rwgpt
+- Runs the AI review on the PR diff
+- Outputs the review to the console (you can extend this to post comments)
+
+### Other CI/CD Platforms
+
+For GitLab CI, Jenkins, CircleCI, etc.:
+
+1. **Install dependencies:**
+   ```bash
+   pip install git+https://github.com/samip584/ai-pr-reviewer.git
+   ```
+
+2. **Set environment variable:**
+   - Add `OPENAI_API_KEY` as a secret/environment variable in your CI settings
+
+3. **Run the review:**
+   ```bash
+   git diff <base_commit>..<head_commit> | rwgpt
+   ```
+
+   Replace `<base_commit>` and `<head_commit>` with appropriate refs (e.g., `origin/main..HEAD` for GitHub-style PRs).
+
+### Notes
+
+- **API Costs:** Be mindful of OpenAI API usage costs for frequent CI runs
+- **Review Quality:** Use AI review as a supplement to human code review, not a replacement
+- **Customization:** Adjust model, temperature, and max tokens for your needs
+- **Integration:** Consider tools like [reviewdog](https://github.com/reviewdog/reviewdog) to post review comments automatically
+
 ## What the AI Reviews
 
 The AI acts as a senior engineer and checks for:
